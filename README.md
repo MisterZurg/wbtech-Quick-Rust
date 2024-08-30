@@ -1,7 +1,6 @@
 # Быстрый Rust
 [![Lint Status](https://img.shields.io/github/actions/workflow/status/MisterZurg/wbtech-Quick-Rust/clippy-lint.yml?branch=dungeon-master&style=for-the-badge)](https://github.com/MisterZurg/wbtech-Quick-Rust/actions?workflow=clippy-lint)
-
-[//]: # ([![Coverage Status]&#40;https://img.shields.io/codecov/c/gh/MisterZurg/wbtech-Quick-Rust.svg?logo=codecov&style=for-the-badge&#41;]&#40;&#41;)
+[![Coverage Status](https://img.shields.io/codecov/c/gh/MisterZurg/wbtech-Quick-Rust.svg?logo=codecov&style=for-the-badge)](https://codecov.io/gh/MisterZurg/wbtech-Quick-Rust)
 
 
 ![svgexport-4.svg](./static/svgexport-4.svg)
