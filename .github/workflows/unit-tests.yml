@@ -6,48 +6,72 @@ on:
     branches: [ "dungeon-master", "master", "main" ]
   pull_request:
     branches: [ "dungeon-master", "master", "main" ]
+#
+#env:
+#  CARGO_TERM_COLOR: always
+#
+#jobs:
+#  build:
+#    name: Test
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
+#      - uses: actions-rs/toolchain@v1
+#        with:
+#          toolchain: stable
+#          override: true
+#      - uses: actions-rs/toolchain@v1
+#        name: Install nightly Rust toolchain with llvm-tools-preview
+#        with:
+#          toolchain: nightly
+#          override: true
+#          profile: minimal
+#          components: llvm-tools-preview
+#      - name: Install grcov
+#        uses: actions-rs/install@v0.1
+#        with:
+#          crate: grcov
+#          version: 0.8.0
+#          use-tool-cache: true
+#      - name: Run cargo test
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: test
+#          args: --all-features --no-fail-fast
+#        env:
+#          RUSTC_BOOTSTRAP: 1
+#          RUSTFLAGS: '-C instrument-coverage'
+#          RUSTDOCFLAGS: '-C instrument-coverage'
+#          LLVM_PROFILE_FILE: 'codecov-instrumentation-%p-%m.profraw'
+#      - name: grcov
+#        run: grcov . --binary-path ./target/debug --ignore="/*" -s ./src -t lcov --branch --ignore-not-existing -o lcov.info
+#      - name: Upload coverage reports to Codecov
+#        uses: codecov/codecov-action@v3
+#        with:
+#          files: ./lcov.info
+#          token: ${{ secrets.CODECOV_TOKEN }}
 
-env:
-  CARGO_TERM_COLOR: always
+#name: Code Coverage
 
+#on: [push]
 jobs:
-  build:
-    name: Test
+  test:
+    name: Coverage
     runs-on: ubuntu-latest
+    container:
+      image: xd009642/tarpaulin:develop-nightly
+      options: --security-opt seccomp=unconfined
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-      - uses: actions-rs/toolchain@v1
-        name: Install nightly Rust toolchain with llvm-tools-preview
-        with:
-          toolchain: nightly
-          override: true
-          profile: minimal
-          components: llvm-tools-preview
-      - name: Install grcov
-        uses: actions-rs/install@v0.1
-        with:
-          crate: grcov
-          version: 0.8.0
-          use-tool-cache: true
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --all-features --no-fail-fast
-        env:
-          RUSTC_BOOTSTRAP: 1
-          RUSTFLAGS: '-C instrument-coverage'
-          RUSTDOCFLAGS: '-C instrument-coverage'
-          LLVM_PROFILE_FILE: 'codecov-instrumentation-%p-%m.profraw'
-      - name: grcov
-        run: grcov . --binary-path ./target/debug --ignore="/*" -s ./src -t lcov --branch --ignore-not-existing -o lcov.info
-      - name: Upload coverage reports to Codecov
+
+      - name: Generate code coverage
+        run: |
+          cargo +nightly tarpaulin --verbose --all-features --workspace --timeout 120 --out Xml
+
+      - name: Upload coverage reports to codecov.io
         uses: codecov/codecov-action@v3
         with:
-          files: ./lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
