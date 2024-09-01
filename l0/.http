@@ -1,0 +1,17 @@
+GET http://localhost:8000/orders/test1september2024 HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+Accept: */*
+
+###
+
+POST http://localhost:8000/orders HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+Accept: */*
+
+{
+  "order_uid": "test1september2024",
+  "track_number": "MRBEAST",
+  "entry": "OZON"
+}
