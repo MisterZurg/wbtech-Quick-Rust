@@ -1,7 +1,7 @@
 # Демонстрационный сервис, отображающий данные о заказе
 Необходимо разработать демонстрационный сервис с простейшим интерфейсом, возвращающий данные о заказе.
 
-Запуск
+## Run
 ```shell
 # postgres db
 docker compose -f ./docker-compose.yml rm && \
@@ -65,6 +65,13 @@ cargo run
 }
 ```
 
+## API Description
+
+## DB Schema
+```mermaid
+
+```
+
 
 # Затронутые темы: Заметки
 ## Axum (без middleware), разделяемое состояние
@@ -77,3 +84,10 @@ cargo run
 ## Сериализация/десериализация (serde, json)
 ## Опционально: БД/транзакции
 ## разделяемые данные через Arc
+
+
+# Refs.
+- [Rust CRUD API Example with Axum and PostgreSQL](https://codevoweb.com/rust-crud-api-example-with-axum-and-postgresql/)
+- [Rust Axum Full Course - Web Development (GitHub repo updated to Axum 0.7)](https://www.youtube.com/watch?v=XZtlD_m59sM)
+- [Build a CRUD REST API with Rust Axum | Tutorial](https://www.youtube.com/watch?v=NJsTgmayHZY)
+- [SQLx is my favorite PostgreSQL driver to use with Rust.](https://www.youtube.com/watch?v=TCERYbgvbq0)

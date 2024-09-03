@@ -26,7 +26,8 @@ struct Order {
     track_number: String,
     entry: String,
     delivery: Delivery,
-    // items: Vec<Item>,
+    // payment: Payment,
+    items: Vec<Item>,
     // locale: String,
     // internal_signature: String,
     // customer_id: String,
@@ -56,34 +57,35 @@ struct Payment {
     request_id: String,
     currency: String,
     provider: String,
-    amount: u64,
-    payment_dt: u64,
+    amount: i64,
+    payment_dt: i64,
     bank: String,
-    delivery_cost: u64,
-    goods_total: u64,
-    custom_fee: u64,
+    delivery_cost: i64,
+    goods_total: i64,
+    custom_fee: i64,
 }
 
 // Item ...
 #[derive(Debug, FromRow, Deserialize, Serialize)]
 struct Item {
-    chrt_id: u64,
+    chrt_id: i64,
     track_number: String,
-    price: u64,
+    price: i64,
     rid: String,
     name: String,
-    sale: u64,
+    sale: i64,
     size: String,
-    total_price: u64,
-    nm_id: u64,
+    total_price: i64,
+    nm_id: i64,
     brand: String,
-    status: u64,
+    status: i64,
 }
 
 
 // ------------------------
 // -- App configuration
 // ------------------------
+#[derive(Deserialize, Serialize)]
 struct Config {
     #[serde(default = "default_db_type")]
     db_type: String,
@@ -166,7 +168,10 @@ pub async fn create_order_handler(
     State(data): State<Arc<AppState>>,
     Json(body): Json<Order>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    println!("{:?}", body);
+    // let mut tx = data.db.begin().await.inspect_err(|err|{
+    //     println!("🚨️🗿 You should ⚡️🧑🏿‍🦱⚡️ now! Failed starting a transaction:{}", err);
+    // });
+
     let query_result = sqlx::query(
         "INSERT INTO orders (order_uid, track_number, entry) VALUES ($1, $2, $3) RETURNING *")
         .bind(body.order_uid.to_string())
@@ -182,6 +187,16 @@ pub async fn create_order_handler(
                 order_uid: row.get("order_uid"),
                 track_number: row.get("track_number"),
                 entry: row.get("entry"),
+                delivery: Delivery {
+                    name: "".to_string(),
+                    phone: "".to_string(),
+                    zip: "".to_string(),
+                    city: "".to_string(),
+                    address: "".to_string(),
+                    region: "".to_string(),
+                    email: "".to_string(),
+                },
+                items: vec![],
             };
 
             let note_response = json!({"status": "success","data": json!({
@@ -212,44 +227,112 @@ async fn get_order_handler(
     Path(order_uid): Path<String>,
     State(data): State<Arc<AppState>>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    println!("Got {}", order_uid);
+    let mut order = Order{
+        order_uid: order_uid.clone(),
+        track_number: "".to_string(),
+        entry: "".to_string(),
+        delivery: Delivery {
+            name: "".to_string(),
+            phone: "".to_string(),
+            zip: "".to_string(),
+            city: "".to_string(),
+            address: "".to_string(),
+            region: "".to_string(),
+            email: "".to_string(),
+        },
+        items: vec![],
+    };
 
-    let query_result = sqlx::query( "SELECT * FROM orders WHERE order_uid = $1")
+    let query_order_result = sqlx::query( "SELECT * FROM orders WHERE order_uid = $1")
         .bind(&order_uid)
         .fetch_one(&data.db)
         .await;
 
-    match query_result {
+    match query_order_result {
         Ok(row) => {
-            let order = Order{
-                order_uid: row.get("order_uid"),
-                track_number: row.get("track_number"),
-                entry: row.get("entry"),
-                delivery: Delivery {
-                    name: "".to_string(),
-                    phone: "".to_string(),
-                    zip: "".to_string(),
-                    city: "".to_string(),
-                    address: "".to_string(),
-                    region: "".to_string(),
-                    email: "".to_string(),
-                },
-            };
-
-            let order_response = json!({"status": "success","data": json!({
-                "note": order
-            })});
-
-            return Ok(Json(order_response));
-        }
-        Err(_) => {
+            order.order_uid = row.get("order_uid");
+            order.track_number = row.get("track_number");
+            order.entry = row.get("entry");
+        } Err(_) => {
             let error_response = json!({
                 "status": "fail",
-                "message": format!("Note with ID: {} not found", order_uid)
+                "message": format!("Order with ID: {} not found", order_uid)
             });
             return Err((StatusCode::NOT_FOUND, Json(error_response)));
         }
     }
+
+
+    let query_delivery_result = sqlx::query("SELECT * FROM deliveries WHERE order_uid = $1")
+        .bind(&order_uid)
+        .fetch_one(&data.db)
+        .await;
+
+
+    match query_delivery_result {
+        Ok(row) => {
+            let delivery = Delivery{
+                name: row.get("name"),
+                phone: row.get("phone"),
+                zip: row.get("zip"),
+                city: row.get("city"),
+                address: row.get("address"),
+                region: row.get("region"),
+                email: row.get("email"),
+            };
+            order.delivery = delivery;
+        } Err(_) => {
+            let error_response = json!({
+                "status": "fail",
+                "message": format!("Delivery with order_uid: {} not found", order_uid)
+            });
+            return Err((StatusCode::NOT_FOUND, Json(error_response)));
+        }
+    }
+
+
+
+    let query_items_result = sqlx::query("SELECT * FROM items WHERE order_uid = $1")
+        .bind(&order_uid)
+        .fetch_all(&data.db)
+        .await;
+
+    match query_items_result {
+        Ok(rows) => {
+            let mut items: Vec<Item> = Vec::with_capacity(rows.len());
+            for row in rows {
+                items.push(Item {
+                    chrt_id: row.get("chrt_id"),
+                    track_number: row.get("track_number"),
+                    price: row.get("price"),
+                    rid: row.get("rid"),
+                    name: row.get("name"),
+                    sale: row.get("sale"),
+                    size: row.get("i_size"),
+                    total_price: row.get("total_price"),
+                    nm_id: row.get("nm_id"),
+                    brand: row.get("brand"),
+                    status: row.get("status"),
+                });
+            }
+            order.items = items;
+        } Err(_) => {
+            let error_response = json!({
+                "status": "fail",
+                "message": format!("Items with order_uid: {} not found", order_uid)
+            });
+            return Err((StatusCode::NOT_FOUND, Json(error_response)));
+        }
+    }
+
+
+
+    let order_response = json!({
+        "status": "success",
+        "data": json!({ "order": order})
+    });
+
+    Ok(Json(order_response))
 }
 
 
@@ -277,11 +360,11 @@ async fn main() {
         .await
     {
         Ok(pool) => {
-            println!("✅ Connection to the database is successful!");
+            println!("🧃🗿 Connection to the database is successful!");
             pool
         }
         Err(err) => {
-            println!("🔥 Failed to connect to the database: {:?}", err);
+            println!("🚨🗿️ You should ⚡️🧑🏿‍🦱⚡️ now! Failed to connect to the database: {:?}", err);
             std::process::exit(1);
         }
     };
