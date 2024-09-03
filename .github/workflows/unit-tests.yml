@@ -1,4 +1,5 @@
-name: rust-lint
+name: Coverage
+run-name: ${{ github.actor }} is uploading Coverage wbtech-Quick-Rust 🍷🗿
 
 on:
   push:
@@ -8,20 +9,21 @@ on:
 
 jobs:
   test:
-    name: Test Suite
+    name: Coverage
     runs-on: ubuntu-latest
+    container:
+      image: xd009642/tarpaulin:develop-nightly
+      options: --security-opt seccomp=unconfined
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
+      - name: Generate code coverage
+        run: |
+          cargo +nightly tarpaulin --verbose --all-features --workspace --timeout 120 --out Xml
 
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
+      - name: Upload coverage reports to codecov.io
+        uses: codecov/codecov-action@v3
         with:
-          command: test
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
