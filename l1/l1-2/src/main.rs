@@ -34,8 +34,8 @@ fn main() {
     // Create a thread
     let square_handle = thread::spawn(move || {
         // Everything in here runs in a separate thread
-        for i in 0..arr.len() {
-            print!("{} ", arr[i] * arr[i]);
+        for v in arr.iter()  {
+            print!("{} ", *v * *v);
         }
     });
 
