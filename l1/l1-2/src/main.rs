@@ -16,16 +16,6 @@ fn scan_vector_size() -> usize {
     x
 }
 
-/// init_vec create initialized vector with nums in range 1..size
-fn init_vec(size: usize) -> Vec<u128> {
-    let mut arr: Vec<u128> = vec![0; size];
-    for i in 0..arr.len() {
-        arr[i] = (i + 1) as u128
-    }
-
-    arr
-}
-
 fn main() {
     let n = scan_vector_size();
     let arr = init_vec(n);
@@ -34,11 +24,22 @@ fn main() {
     // Create a thread
     let square_handle = thread::spawn(move || {
         // Everything in here runs in a separate thread
-        for v in arr.iter()  {
+        for v in arr.iter() {
             print!("{} ", *v * *v);
         }
     });
 
     // Wait until other thread has finished
     square_handle.join().expect("Thread did not panic");
+}
+
+#[allow(clippy::all)]
+/// init_vec create initialized vector with nums in range 1..size
+fn init_vec(size: usize) -> Vec<u128> {
+    let mut arr: Vec<u128> = vec![0; size];
+    for i in 0..arr.len() {
+        arr[i] = (i + 1) as u128
+    }
+
+    arr
 }
