@@ -5,7 +5,7 @@ pub trait Action {
 
 /// Person структуру, которая содержит строковое имя.
 pub struct Person {
-    pub name: String
+    pub name: String,
 }
 
 /// Реализацию трейта Action
@@ -16,8 +16,8 @@ impl Action for Person {
 }
 
 fn main() {
-    let p = Person{
-        name: "Mikhail Grachev".to_string()
+    let p = Person {
+        name: "Mikhail Grachev".to_string(),
     };
 
     p.say();
