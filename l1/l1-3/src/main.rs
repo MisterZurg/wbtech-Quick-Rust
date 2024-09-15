@@ -1,6 +1,5 @@
-use std::{io, thread};
 use std::sync::mpsc::channel;
-
+use std::{io, thread};
 
 /// scan_vector_size helper for init_vec()
 fn scan_vector_size() -> usize {
@@ -18,6 +17,8 @@ fn scan_vector_size() -> usize {
     x
 }
 
+
+#[allow(clippy::all)]
 /// init_vec create initialized vector with nums in range 1..size
 fn init_vec(size: usize) -> Vec<u128> {
     let mut arr: Vec<u128> = vec![0; size];
@@ -27,7 +28,6 @@ fn init_vec(size: usize) -> Vec<u128> {
 
     arr
 }
-
 
 // Используя параллельные вычисления,
 // найти сумму квадратов этих чисел и вывести в stdout.
@@ -41,7 +41,7 @@ fn main() {
     // Create a thread
     thread::spawn(move || {
         // Everything in here runs in a separate thread
-        for v in arr.iter()  {
+        for v in arr.iter() {
             tx.send(*v * *v).unwrap();
         }
     });
