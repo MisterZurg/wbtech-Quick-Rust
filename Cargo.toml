@@ -1,4 +1,6 @@
 [workspace]
 members = [
-
+    "l1/l1-4"
 ]
+
+resolver = "2"
