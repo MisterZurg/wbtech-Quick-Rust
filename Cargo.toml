@@ -2,3 +2,5 @@
 members = [
     "l1/l1-6"
 ]
+
+resolver = "2"
