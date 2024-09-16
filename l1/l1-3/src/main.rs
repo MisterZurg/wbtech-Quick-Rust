@@ -1,0 +1,54 @@
+use std::sync::mpsc::channel;
+use std::{io, thread};
+
+/// scan_vector_size helper for init_vec()
+fn scan_vector_size() -> usize {
+    let mut input_line = String::new();
+
+    io::stdin() // the rough equivalent of `std::cin`
+        .read_line(&mut input_line) // actually read the line
+        .expect("Failed to read line"); // which can fail, however
+
+    let x: usize = input_line
+        .trim() // ignore whitespace around input
+        .parse() // convert to integers
+        .expect("Input not an integer"); // which, again, can fail
+
+    x
+}
+
+
+#[allow(clippy::all)]
+/// init_vec create initialized vector with nums in range 1..size
+fn init_vec(size: usize) -> Vec<u128> {
+    let mut arr: Vec<u128> = vec![0; size];
+    for i in 0..arr.len() {
+        arr[i] = (i + 1) as u128
+    }
+
+    arr
+}
+
+// Используя параллельные вычисления,
+// найти сумму квадратов этих чисел и вывести в stdout.
+fn main() {
+    let n = scan_vector_size();
+    let arr = init_vec(n);
+
+    // Create a simple streaming channel
+    let (tx, rx) = channel();
+
+    // Create a thread
+    thread::spawn(move || {
+        // Everything in here runs in a separate thread
+        for v in arr.iter() {
+            tx.send(*v * *v).unwrap();
+        }
+    });
+
+    let mut acc = 0;
+    for _ in 0..n {
+        acc += rx.recv().unwrap();
+        print!("{} ", acc);
+    }
+}
