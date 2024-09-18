@@ -2,3 +2,5 @@
 members = [
 
 ]
+
+resolver = "2"

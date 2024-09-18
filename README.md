@@ -7,7 +7,7 @@
 ![svgexport-4.svg](./static/svgexport-4.svg)
 
 ## About the course
-> [!INFO]
+> [!NOTE]
 > HighLoad на Rust. Изучаем один из самых быстрых языков программирования, как идеальный инструмент разработки высоконагруженных приложений.
 
 ## Instructors
@@ -30,7 +30,20 @@ WBTech
 - Демонстрационный сервис, отображающий данные о заказе
 
 ## L1
-TBA
+- L1.1 Trait Action
+- L1.2 Squares
+- L1.3 Squares Sum
+- L1.4 Worker Pool
+- L1.5 Graceful Shutdown
+- L1.6 Channels notify
+- L1.7 Close / Cancellation token
+- L1.8 HashMap, DashMap
+- L1.9 Set i-th bit
+- L1.10 Number pipeline
+- L1.11
+- L1.12
+- L1.13
+
 
 ## L2
 TBA
