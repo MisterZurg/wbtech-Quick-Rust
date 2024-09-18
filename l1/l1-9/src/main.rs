@@ -30,9 +30,9 @@ fn set_bit(mut number: i64, index: usize, value: bool) -> i64 {
 }
 
 fn main() {
-    let set_i_bit: i64 = 10;                // Example number
-    let index: usize = scan_bit_to_set();   // Bit position to modify
-    let set_to_one: bool = true;            // Change this to false to set to 0
+    let set_i_bit: i64 = 10; // Example number
+    let index: usize = scan_bit_to_set(); // Bit position to modify
+    let set_to_one: bool = true; // Change this to false to set to 0
 
     let result = set_bit(set_i_bit, index, set_to_one);
 
