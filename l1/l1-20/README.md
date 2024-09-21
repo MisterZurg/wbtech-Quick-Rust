@@ -9,3 +9,5 @@
 > Think of it as a real-world adapter: just like you'd use a power adapter to connect your laptop's plug to a foreign electrical outlet, 
 > the Adapter pattern lets you connect unfamiliar interfaces in your code.
 
+## Ref.
+[Global Currency Converter](https://www.xe.com/currencyconverter)
