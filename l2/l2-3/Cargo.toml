@@ -4,3 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+log = "0.4.22"
+clap = { version = "4.5.19", features = ["derive"] }
+regex = "1.11.0"
