@@ -35,3 +35,16 @@ GET /events_for_month
 Параметры передаются в виде www-url-form-encoded (т.е. обычные user_id=3&date=2019-09-09). В GET методах параметры передаются через queryString, в POST через тело запроса.
 
 В результате каждого запроса должен возвращаться JSON-документ содержащий либо {"result": "..."} в случае успешного выполнения метода, либо {"error": "..."} — в случае ошибки бизнес-логики.
+
+```mermaid
+---
+title: Repository Structure not to driving mad
+---
+flowchart LR
+    A@{ shape: rect, label: "Users[ID] -> UserCalendar" }
+    B@{ shape: rect, label: "UserCalendar[Date] -> Events..." }
+    C@{ shape: rect, label: "Events for day" }
+
+    A --> B
+    B --> C
+```

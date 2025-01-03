@@ -1,6 +1,7 @@
 [workspace]
-members = ["l2/l2-11"
-
+members = [
+    "dummy",
+    "l2/l2-11"
 ]
 
 resolver = "2"

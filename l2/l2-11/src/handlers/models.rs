@@ -1,17 +1,38 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize)]
-pub struct CreateEventPayload {
-    // event_id: i64, // user_id#date definitely no blind sql injection
-    // user_id: i64,
-    date: String,
-    description: String,
+
+#[derive(Clone, Debug, Serialize)]
+pub struct CalendarEvent {
+    pub event_id: i64,
+    pub date: String,
+    pub description: String,
 }
 
 #[derive(Deserialize)]
-pub struct UpdateEventPayload {
-    // event_id: i64, // user_id#date definitely no blind sql injection
-    // user_id: i64,
-    date: String,
-    description: String,
+pub struct CreateCalendarEventPayload {
+    pub user_id: i64,
+    pub date: String,
+    pub description: String,
+}
+
+#[derive(Deserialize)]
+pub struct UpdateCalendarEventPayload {
+    pub user_id: i64,
+    pub date: String,
+    pub event_id: i64,
+    pub description: String,
+}
+
+#[derive(Deserialize)]
+pub struct DeleteCalendarEventPayload {
+    pub user_id: i64,
+    pub date: String,
+    pub event_id: i64,
+}
+
+#[derive(Serialize)]
+pub struct GetCalendarEventPayload {
+    pub event_id: i64,
+    pub date: String,
+    pub description: String,
 }
