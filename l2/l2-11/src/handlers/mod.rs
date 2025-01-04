@@ -1,26 +1,27 @@
 mod models;
 mod mw_validate;
 
+use axum::http::StatusCode;
 use axum::response::{Html, IntoResponse, Response};
 use axum::extract::{Path, Query, State};
 use axum::Json;
+
 use serde::Deserialize;
+use serde_json::json;
 
 use crate::error::{Error, Result};
 use crate::handlers::models::CalendarEvent;
 use crate::repository;
 
-use serde_json::json;
-use log::debug;
 
 /// POST /create_event
 pub async fn create_event(
     _mc: State<repository::ModelController>,
     Json(payload): Json<models::CreateCalendarEventPayload>,
-) -> Result<Json<CalendarEvent>> {
+) -> Result<(StatusCode, Json<CalendarEvent>)> {
     let calendar_event = _mc.create_event(
         payload.user_id,
-        crate::repository::models::CalendarEventForCreate {
+        repository::models::CalendarEventForCreate {
             date: payload.date,
             description: payload.description,
         }).await?;
@@ -34,7 +35,7 @@ pub async fn create_event(
 
     println!("🚧DEBUG: create_event {:?}", resp);
 
-    Ok(Json(resp))
+    Ok((StatusCode::CREATED, Json(resp)))
 }
 
 
@@ -42,7 +43,7 @@ pub async fn create_event(
 pub async fn update_event(
     _mc: State<repository::ModelController>,
     Json(payload): Json<models::UpdateCalendarEventPayload>
-) -> Result<Json<CalendarEvent>> {
+) -> Result<(StatusCode, Json<CalendarEvent>)> {
     let calendar_event = _mc.update_event(
         payload.user_id,
         payload.event_id,
@@ -50,6 +51,8 @@ pub async fn update_event(
             description: payload.description,
         }).await?;
 
+    // TODO refactor
+    // Ok((StatusCode::SERVICE_UNAVAILABLE, calendar_event)
 
     let resp = CalendarEvent {
         event_id: calendar_event.event_id,
@@ -59,15 +62,24 @@ pub async fn update_event(
 
     println!("🚧DEBUG: update_event {:?}", resp);
 
-    Ok(Json(resp))
+    // match query_delivery_result {
+    //     Ok(row) => {
+    //        ok
+    //     } Err(_) => {
+    //         Ok err
+    //     }
+    // }
+    Ok((StatusCode::OK, Json(resp)))
 }
 
 /// POST /delete_event
 pub async fn delete_event(
     _mc: State<repository::ModelController>,
-    Json(payload): Json<models::UpdateCalendarEventPayload>
-) -> Result<Json<CalendarEvent>> {
+    Json(payload): Json<models::DeleteCalendarEventPayload>
+) -> Result<StatusCode> {
+    let _ =_mc.delete_event(payload.user_id, payload.remove_event_id, payload.date).await?;
 
+    Ok(StatusCode::OK)
 }
 
 
@@ -81,7 +93,7 @@ pub struct eventsForDayParams {
 pub async fn events_for_day(
     _mc: State<repository::ModelController>,
     Query(params): Query<eventsForDayParams>,
-) -> Result<Json<Vec<CalendarEvent>>> {
+) -> Result<(StatusCode, Json<Vec<CalendarEvent>>)> {
     let calendar_events = _mc.get_events_for_day(params.user_id, params.date).await?;
 
     let resp: Vec<CalendarEvent> = calendar_events
@@ -95,7 +107,7 @@ pub async fn events_for_day(
 
     println!("events_for_day {:?}", resp);
 
-    Ok(Json(resp))
+    Ok((StatusCode::OK, Json(resp)))
 }
 //
 // /// GET /events_for_week

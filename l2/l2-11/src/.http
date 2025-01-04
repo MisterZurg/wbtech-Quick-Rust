@@ -44,3 +44,16 @@ Accept: */*
   "date" : "2024-12-14",
   "description" : "Дедлайн и дедлайн, чего бубнить-то"
 }
+
+### Delete evente
+
+POST localhost:3000/delete_event
+Host: localhost:3000
+Content-Type: application/json
+Accept: */*
+
+{
+  "user_id" : 1,
+  "date" : "2024-12-14",
+  "remove_event_id" : 0
+}

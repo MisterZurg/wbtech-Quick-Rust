@@ -12,6 +12,14 @@ impl CalendarEvent {
             description,
         }
     }
+
+    pub fn default() -> Self {
+        CalendarEvent{
+            event_id: 0,
+            date: "".to_string(),
+            description: "".to_string(),
+        }
+    }
 }
 
 #[derive(Clone)]

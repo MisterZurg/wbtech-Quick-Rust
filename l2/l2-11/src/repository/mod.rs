@@ -113,9 +113,33 @@ impl ModelController {
         }
     }
 
-    // pub async fn delete_event() -> Result<()> { {
-    //     todo!()
-    // }
+    pub async fn delete_event(
+        &self,
+        user_id: i64,
+        remove_event_id: i64,
+        event_date: String,
+    ) -> Result<()> {
+        let mut calendar_storage_storage_guard = self.calendar_storage.lock().unwrap();
+
+
+        match calendar_storage_storage_guard.get_mut(&user_id) {
+            Some(user_calendar) => {
+                match user_calendar.get_mut(&event_date) {
+                    Some(mut events) => {
+
+                        if let Some(index) = events.iter().position(|event| event.event_id == remove_event_id) {
+                            events.swap_remove(index);
+                        }
+
+                        Ok(())
+                    }
+                    None => { panic!("NO user_calendar") },
+                }
+            }
+            // Case There's no such user
+            None => { panic!("NO user found") },
+        }
+    }
 
 
     // endregion: --- POST Handlers

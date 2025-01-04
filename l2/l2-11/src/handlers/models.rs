@@ -27,7 +27,7 @@ pub struct UpdateCalendarEventPayload {
 pub struct DeleteCalendarEventPayload {
     pub user_id: i64,
     pub date: String,
-    pub event_id: i64,
+    pub remove_event_id: i64,
 }
 
 #[derive(Serialize)]
