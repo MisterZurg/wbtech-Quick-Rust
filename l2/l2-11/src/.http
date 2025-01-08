@@ -1,0 +1,59 @@
+### Create first event user 1!
+
+POST localhost:3000/create_event
+Host: localhost:3000
+Content-Type: application/json
+Accept: */*
+
+{
+  "user_id" : 1,
+  "date" : "2024-12-14",
+  "description" : "WB Rust course deadline, was two month ago prev year"
+}
+
+### Get it
+
+GET localhost:3000/events_for_day?user_id=1&date=2024-12-14  HTTP/1.1
+Host: localhost:3000
+Content-Type: application/json
+Accept: */*
+
+### Create second event for user 1 same date!
+
+POST localhost:3000/create_event
+Host: localhost:3000
+Content-Type: application/json
+Accept: */*
+
+{
+  "user_id" : 1,
+  "date" : "2024-12-14",
+  "description" : "Second event"
+}
+
+###
+
+POST localhost:3000/update_event
+Host: localhost:3000
+Content-Type: application/json
+Accept: */*
+
+{
+  "user_id" : 1,
+  "event_id" : 0,
+  "date" : "2024-12-14",
+  "description" : "Дедлайн и дедлайн, чего бубнить-то"
+}
+
+### Delete evente
+
+POST localhost:3000/delete_event
+Host: localhost:3000
+Content-Type: application/json
+Accept: */*
+
+{
+  "user_id" : 1,
+  "date" : "2024-12-14",
+  "remove_event_id" : 0
+}
