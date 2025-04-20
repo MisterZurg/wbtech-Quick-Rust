@@ -1,6 +1,6 @@
 [workspace]
-members = [
+members = ["l2/l2-10-telnet-client"
 
-]
+, "l2/l2-10-server"]
 
 resolver = "2"
